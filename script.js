@@ -1,15 +1,26 @@
 
-function crop() {
-    let main =document.getElementById("main")
-main.innerHTML='';
+function Year_Fertilizer() {
+
+    document.getElementById("main").innerHTML = '';
+
+    Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Successfully load the data set",
+        showConfirmButton: false,
+        timer: 1500
+    });
+
     const xlabels = [];
     const ytemps = [];
 
+    setTimeout(() => {
+        chartYear_Fertilizer();
+    }, 1000);
 
-    chart();
+    async function chartYear_Fertilizer() {
 
-    async function chart() {
-        await getdata();
+        await getdataYear_Fertilizer();
         const ctx = document.getElementById('myChart');
 
         new Chart(ctx, {
@@ -17,17 +28,14 @@ main.innerHTML='';
             data: {
                 labels: xlabels,
                 datasets: [{
-                    label: 'Crop yield(Annual Rainfall)',
+                    label: 'Crop yield(Year Fertilizer)',
                     data: ytemps,
-                    //data: [dataArry[0]],
                     borderWidth: 1,
                     backgroundColor: [
                         "rgba(7, 85, 193, 0.92)",
                         "rgba(109, 85, 193, 0.92)",
                         "rgba(26, 167, 35, 0.92)"
                     ],
-                    // borderColor: "rgba(75, 192, 192, 1)",
-                    //fill: true
                 }]
             },
             options: {
@@ -35,14 +43,14 @@ main.innerHTML='';
                     x: {
                         title: {
                             display: true,
-                            text: 'Year' // Label for X-axis
+                            text: 'Year'
                         }
                     },
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Annual Rainfall' // Label for Y-axis
+                            text: 'Fertilizer'
                         }
                     }
                 }
@@ -50,11 +58,92 @@ main.innerHTML='';
         });
     }
 
+    async function getdataYear_Fertilizer() {
+        const res = await fetch('crop_yield.csv');
+        const list = await res.text();
+
+        const table = list.split('\n').slice(1);
+        table.forEach(row => {
+            const columns = row.split(",");
+            const year = columns[1];
+            xlabels.push(year)
+            const Production = columns[7];
+            ytemps.push(Production);
+        });
 
 
 
 
-    async function getdata() {
+    }
+}
+
+
+
+
+
+
+
+////////////////////////////Year_Annual_Rainfall/////////////////////////////////////
+function Year_Annual_Rainfall() {
+
+    document.getElementById("main").innerHTML = '';
+
+    Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Successfully load the data set",
+        showConfirmButton: false,
+        timer: 1500
+    });
+
+    const xlabels = [];
+    const ytemps = [];
+
+    setTimeout(() => {
+        chartYear_Annual_Rainfall();
+    }, 1000);
+
+    async function chartYear_Annual_Rainfall() {
+
+        await getdataYear_Annual_Rainfall();
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: xlabels,
+                datasets: [{
+                    label: 'Crop yield(Year & Annual Rainfall)',
+                    data: ytemps,
+                    borderWidth: 1,
+                    backgroundColor: [
+                        "rgba(7, 85, 193, 0.92)",
+                        "rgba(109, 85, 193, 0.92)",
+                        "rgba(26, 167, 35, 0.92)"
+                    ],
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Annual Rainfall'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    async function getdataYear_Annual_Rainfall() {
         const res = await fetch('crop_yield.csv');
         const list = await res.text();
 
@@ -73,30 +162,88 @@ main.innerHTML='';
     }
 }
 
-function homePage() {
-    document.body.innerHTML = '';
-    document.body.innerHTML=`<nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="images/_78b3614e-0c2b-40b6-b913-5570eda6806b.jpg" alt="" class="imgDashBoard">
-                Plant Care Dashboard
-            </a><br>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon "></span>
-            </button> 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Add navigation items -->
-                <a class="btn btn-primary" href="index.html" role="button" onclick="homePage()"><i class="bi bi-send"></i>&nbsp;
-                    Home </a>
-                <a class="btn btn-primary" href="#" role="button" onclick="crop()"><i class="bi bi-send"></i>&nbsp;
-                    Primary Link</a>
-                <a class="btn btn-primary" href="#" role="button" onclick=""><i class="bi bi-send"></i>&nbsp;
-                    Primary Link</a>
-                <a class="btn btn-primary" href="#" role="button" onclick=""><i class="bi bi-send"></i>&nbsp;
-                    Primary Link</a>
-            </div>
-        </div>
-    </nav>;`
+////////////////////////Chat Bot/////////////////////
+const chatList = [];
+
+let user = "";
+
+
+
+function sendMassage() {
+    console.log("Send!!");
+
+    let txtUserInput = document.getElementById("txtUserInput").value;
+    let chatBubble = "";
+
+    chatBubble = `<h5 class="text-end  ">${txtUserInput} <i class="bi bi-brilliance"></i></h5>`;
+
+
+    chatList.push(chatBubble);
+
+    loadChatBox();
+    API(txtUserInput);
+
+    console.log(chatList);
 }
+
+function loadChatBox() {
+    document.getElementById("chatBox").innerHTML = "";
+    chatList.forEach(element => {
+        document.getElementById("chatBox").innerHTML += element;
+    })
+
+}
+
+
+function API(txtUserInput) {
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": `"${txtUserInput}"`
+                    }
+                ]
+            }
+        ]
+    });
+
+    const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+    };
+
+    fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyAPWUOShLApOHAcV0Oq7YNM16DCyDeuRa4", requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+
+            let chatBubble = `<h5 class="text-start  "><i class="bi bi-bullseye"></i> ${result.candidates[0].content.parts[0].text}</h5>`;
+
+            chatList.push(chatBubble);
+            document.getElementById("chatBox").innerHTML += `<h5 class="text-start  "><i class="bi bi-bullseye"></i> ${result.candidates[0].content.parts[0].text}</h5>`
+
+        })
+
+        .catch((error) => console.error(error));
+
+}
+
+
+////////////////////////////////////////////////////////////
+
+function dataSetLink() {
+    document.getElementById("main").innerHTML = `<a class="icon-link icon-link-hover" href="https://www.kaggle.com/datasets/patelris/crop-yield-prediction-dataset">
+  Click me to copy link
+  <svg class="bi" aria-hidden="true"><use xlink:href="#arrow-right"></use></svg>
+</a>`;
+
+}
+
+
 

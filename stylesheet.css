@@ -4,3 +4,25 @@
     width: 8%;
     height:auto
     }
+
+    #chatBox {
+        width: 500px;
+        height: 250px;
+        background: #fff;
+        border: 2px solid #ccc;
+        border-radius: 15px;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+
+
+
+
+
+
+
+
